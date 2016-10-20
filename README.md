@@ -73,3 +73,84 @@ filter=true
 # mkdir /opt/mesosphere/active/dcos-ui/usr/data
 # cp /home/azure/airports1000FS.json /opt/mesosphere/active/dcos-ui/usr/data/
 </pre>
+
+<h1> Deploy Kafka From Universe </h1>
+
+I used confluent-kafka and defaults.
+
+<h1> Create tcp-kafka Marathon App </h1>
+
+Use this json <a href="tcp-kafka.json">tcp-kafka.json</a>
+
+Watch Mesos to make sure the application deploys. If it fails stop in Marathon and correct any errors reported in stderr on Mesos.
+
+<h1> Run Simulator </h1>
+
+<pre>
+$ java -cp Simulator-jar-with-dependencies.jar com.esri.simulator.Tcp tcp-kafka.marathon.mesos 5565 simFile_1000_10s.dat 10 100
+</pre>
+
+Check stdout of the tcp-kafka.  You should see something like:
+
+<pre>
+100 , 10
+</pre>
+
+Stdout reports that 100 features were read at a rate of 10 per second.
+
+<h1> Create kafka-transform-kafka Marathon App </h1>
+
+Use this json <a href="kafka-transform-kafka.json">kafka-transform-kafka.json</a>
+
+This application picks the CSV lines off of Kafka topic simFile performs a transformation and writes to Kafka topic simFileTrans.  
+
+Command Line
+
+<pre>
+$MESOS_SANDBOX/jre1.8.0_91/bin/java -cp $MESOS_SANDBOX/rtsink.jar com.esri.rtsink.KafkaTransformKafka confluent-kafka simFile group1 com.esri.rtsink.TransformGeotagSimFile simFileTrans $PORT0 
+</pre>
+
+Runs com.esri.rtsink.KafkaTransformKafka in the rsink.jar. Parameters:
+- confluent-kafka (name of the kafka application in Marathon)
+- simFile (topic to consume)
+- group1 (group name to consume under
+- com.esri.rtsink.TransformGeotagSimFile (Transformation Class; this class reads properties file bundled in rtsink.tgz)
+- simFileTrans (topic to write results too)
+- $PORT0 (Listen on default marathon port for health check and resets)
+
+Run the simulation again.
+
+<pre>
+$ java -cp Simulator-jar-with-dependencies.jar com.esri.simulator.Tcp tcp-kafka.marathon.mesos 5565 simFile_1000_10s.dat 100 1000
+</pre>
+
+This time run 1000 features at a rate of 100 per second.  You should see output of count,rate on both tcp-kafka and on kafka-transform-kafka.  
+
+<h1> Create kafka-noop-stdout Marathon App </h1>
+
+Use this json <a href="kafka-noop-stdout.json">kafka-noop-stdout.json</a>
+
+This task consumes the Kafka topic simFileTrans and writes records to the standard output. 
+
+Command line:
+
+<pre>
+$MESOS_SANDBOX/jre1.8.0_91/bin/java -cp $MESOS_SANDBOX/rtsink.jar com.esri.rtsink.KafkaTransformStdout confluent-kafka simFileTrans group1 noOp 1 $PORT0
+</pre>
+
+Runs com.esri.rtsink.KafkaTransformStdout in the rsink.jar. Parameters:
+- confluent-kafka (name of the kafka application in Marathon)
+- simFileTrans (topic to consume)
+- group1 (group name to consume under
+- noOp (No transformation)
+- 1 (Show every record)
+- $PORT0 (Listen on default marathon port for health check and resets)
+
+Run the simulation again.
+
+<pre>
+$ java -cp Simulator-jar-with-dependencies.jar com.esri.simulator.Tcp tcp-kafka.marathon.mesos 5565 simFile_1000_10s.dat 100 1000
+</pre>
+
+This time run 1000 features at a rate of 100 per second.  You should see output of count,rate on both tcp-kafka and on kafka-transform-kafka.  You should also see some transformed; filtered, geotagged json in stdout of kafka-noop-stdout.
+
