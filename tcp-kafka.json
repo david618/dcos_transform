@@ -1,0 +1,61 @@
+{
+  "id": "/tcp-kafka",
+  "cmd": "$MESOS_SANDBOX/jre1.8.0_91/bin/java -cp $MESOS_SANDBOX/rtsource.jar com.esri.rtsource.TcpKafka 5565 confluent-kafka simFile $PORT0 false",
+  "cpus": 1.5,
+  "mem": 2560,
+  "disk": 0,
+  "instances": 1,
+  "constraints": [
+    [
+      "hostname",
+      "UNIQUE"
+    ]
+  ],
+  "healthChecks": [
+    {
+      "path": "/",
+      "protocol": "HTTP",
+      "portIndex": 0,
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3,
+      "ignoreHttp1xx": false
+    }
+  ],
+  "labels": {
+    "HAPROXY_GROUP": "external"
+  },
+  "portDefinitions": [
+    {
+      "port": 10001,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ],
+  "uris": [
+    "http://m1/apps/jre-8u91-linux-x64.tar.gz",
+    "http://m1/apps/rtlib.tgz",
+    "http://m1/apps/rtsource.jar"
+  ],
+  "fetch": [
+    {
+      "uri": "http://m1/apps/jre-8u91-linux-x64.tar.gz",
+      "extract": true,
+      "executable": false,
+      "cache": false
+    },
+    {
+      "uri": "http://m1/apps/rtlib.tgz",
+      "extract": true,
+      "executable": false,
+      "cache": false
+    },
+    {
+      "uri": "http://m1/apps/rtsource.jar",
+      "extract": false,
+      "executable": false,
+      "cache": false
+    }
+  ]
+}
