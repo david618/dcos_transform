@@ -26,7 +26,7 @@ For my example I created a cluster with one master, three agents, and one public
 - <a href="https://github.com/david618/rtsink">Real-Time Sink</a>
 - <a href="https://github.com/david618/Simulator">Simulator</a> 
 
-<h1> Create rtlib.tgz </h1>
+<h2> Create rtlib.tgz </h2>
 
 Combined target/lib for both Source and Sink into one folder "lib".  Then created tgz.
 
@@ -66,7 +66,7 @@ filter=true
 $ tar cvzf rtsink.tgz com.esri.rtsink.TransformGeotagSimFile.properties rtsink.jar
 </pre>
 
-<h1> Move files to Web Server on Master </h1>
+<h2> Move files to Web Server on Master </h2>
 
 <pre>
 $ sudo su -
@@ -81,31 +81,35 @@ $ sudo su -
 # cp /home/azureuser/airports1000FS.json /opt/mesosphere/active/dcos-ui/usr/data/
 </pre>
 
-<h1> Deploy Kafka From Universe </h1>
+<h2> Deploy Kafka From Universe </h2>
 
 I used confluent-kafka and defaults.
 
-<h1> Create tcp-kafka Marathon App </h1>
+<h2> Create tcp-kafka Marathon App </h2>
 
 Use this json <a href="tcp-kafka.json">tcp-kafka.json</a>
 
-Watch Mesos to make sure the application deploys. If it fails stop in Marathon and correct any errors reported in stderr on Mesos.
+Review the json.  You may need to tweak some of the elements.  For example if you didn't use master server to host the url or you used a different jre version.
 
-<h1> Run Simulator </h1>
+Watch Mesos to make sure the application deploys. If it fails stop in Marathon and correct any errors reported in Sandbox stderr or stdout.
+
+<h2> Run Simulator </h2>
+
+<p> The goal of this simulation run is to verify the tcp-kafka is working and it will also create the Kafka topic. </p>
 
 <pre>
 $ java -cp Simulator-jar-with-dependencies.jar com.esri.simulator.Tcp tcp-kafka.marathon.mesos 5565 simFile_1000_10s.dat 10 100
 </pre>
 
-Check stdout of the tcp-kafka.  You should see something like:
+Check stdout of the tcp-kafka.  You should see something like: <br>
 
 <pre>
 100 , 10
 </pre>
 
-Stdout reports that 100 features were read at a rate of 10 per second.
+Stdout reports that 100 features were read at a rate of 10 per second.  Rate might not be 10; I've seen 9,10,and 11.  This is the rate measured for the input and with a small sample set it can vary. 
 
-<h1> Create kafka-transform-kafka Marathon App </h1>
+<h2> Create kafka-transform-kafka Marathon App </h2>
 
 Use this json <a href="kafka-transform-kafka.json">kafka-transform-kafka.json</a>
 
