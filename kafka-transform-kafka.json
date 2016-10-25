@@ -23,36 +23,9 @@
       "ignoreHttp1xx": false
     }
   ],
-  "portDefinitions": [
-    {
-      "port": 10002,
-      "protocol": "tcp",
-      "labels": {}
-    }
-  ],
   "uris": [
     "http://m1/apps/jre-8u91-linux-x64.tar.gz",
     "http://m1/apps/rtsink.tgz",
     "http://m1/apps/rtlib.tgz"
-  ],
-  "fetch": [
-    {
-      "uri": "http://m1/apps/jre-8u91-linux-x64.tar.gz",
-      "extract": true,
-      "executable": false,
-      "cache": false
-    },
-    {
-      "uri": "http://m1/apps/rtsink.tgz",
-      "extract": true,
-      "executable": false,
-      "cache": false
-    },
-    {
-      "uri": "http://m1/apps/rtlib.tgz",
-      "extract": true,
-      "executable": false,
-      "cache": false
-    }
   ]
 }
