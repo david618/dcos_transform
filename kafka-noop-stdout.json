@@ -1,6 +1,6 @@
 {
   "id": "/kafka-noop-stdout",
-  "cmd": "$MESOS_SANDBOX/jre1.8.0_91/bin/java -cp $MESOS_SANDBOX/rtsink.jar com.esri.rtsink.KafkaTransformStdout confluent-kafka simFileTrans group1 noOp 1 $PORT0",
+  "cmd": "$MESOS_SANDBOX/jre1.8.0_91/bin/java -cp $MESOS_SANDBOX/rtsink.jar com.esri.rtsink.KafkaTransformStdout confluent-kafka simFileTrans group1 noOp 10 $PORT0",
   "cpus": 1,
   "mem": 1024,
   "disk": 0,
