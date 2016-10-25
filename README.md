@@ -135,9 +135,10 @@ Run the simulation again.
 $ java -cp Simulator-jar-with-dependencies.jar com.esri.simulator.Tcp tcp-kafka.marathon.mesos 5565 simFile_1000_10s.dat 100 1000
 </pre>
 
-This time run 1000 features at a rate of 100 per second.  You should see output of count,rate on both tcp-kafka and on kafka-transform-kafka.  
+This time run 1000 features at a rate of 100 per second.  You should see output of count,rate on both tcp-kafka and on kafka-transform-kafka. In the stdout of kafka-transform-kafka; you should also see a line as it reads the 100 events you sent earlier. Then a second line with the 1,000 events you just sent.  The rate for both should be around 100.  
 
-<h1> Create kafka-noop-stdout Marathon App </h1>
+
+<h2> Create kafka-noop-stdout Marathon App </h2>
 
 Use this json <a href="kafka-noop-stdout.json">kafka-noop-stdout.json</a>
 
