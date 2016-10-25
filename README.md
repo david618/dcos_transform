@@ -1,4 +1,4 @@
-<h1>Transforming CSV using a spatial filter</h1>
+<h2>Transforming CSV using a spatial filter</h2>
 
 Three Marathon tasks 
 - <b>tcp-kafka</b> Listens on port 5565 for lines of comma separated values; write lines to Kafka Topic 
@@ -16,11 +16,11 @@ Sample Output Line
 </pre>
 
 
-<h1> Create a DCOS Cluster </h1>
+<h2> Create a DCOS Cluster </h2>
 
 For my example I created a cluster with one master, three agents, and one public agent in Azure.
 
-<h1> Compiled Applications </h1>
+<h2> Compiled Applications </h2>
 
 - <a href="https://github.com/david618/rtsource">Real-Time Source</a> 
 - <a href="https://github.com/david618/rtsink">Real-Time Sink</a>
@@ -32,7 +32,7 @@ Combined target/lib for both Source and Sink into one folder "lib".  Then create
 
 <pre>$ tar cvzf rtlib.tgz lib/*</pre>
 
-<h1> Copy files to DCOS Master </h1>
+<h2> Copy files to DCOS Master </h2>
 
 <pre>
 $ scp -i azureuser rtlib.tgz azureuser@IPADDRESS:. 
@@ -47,7 +47,7 @@ $ scp -i azureuser simFile_1000_10s.dat azureuser@IPADDRESS:.
 
 The jre can be whatever is the most current version.  You'll need to adjust marathon apps as needed below.
 
-<h1> Edit TransformGeotagSimile.properties </h1>
+<h2> Edit TransformGeotagSimile.properties </h2>
 
 <pre>
 $ vi com.esri.rtsink.TransformGeotagSimFile.properties
@@ -60,18 +60,25 @@ filter=true
 - fieldName: The Marathon task kafka-transform-kafka adds this field and if point is in a polygon the value from polygon feature
 - filter: If true the Marathon task kafka-transform-kafka only writes output for points in a polygon. 
 
+<h2> Package properties file with rtsink.jar </h2>
+
+<pre>
+$ tar cvzf rtsink.tgz com.esri.rtsink.TransformGeotagSimFile.properties rtsink.jar
+</pre>
+
 <h1> Move files to Web Server on Master </h1>
 
 <pre>
+$ sudo su -
 # mkdir /opt/mesosphere/active/dcos-ui/usr/apps
 # cp /home/azureuser/rtlib.tgz /opt/mesosphere/active/dcos-ui/usr/apps/
 # cp /home/azureuser/rtsource.jar /opt/mesosphere/active/dcos-ui/usr/apps/
-# cp /home/azureuser/rtlib.tgz /opt/mesosphere/active/dcos-ui/usr/apps/
-# cp /home/azureuser/rtlib.tgz /opt/mesosphere/active/dcos-ui/usr/apps/
+# cp /home/azureuser/rtsink.tgz /opt/mesosphere/active/dcos-ui/usr/apps/
+# cp /home/azureuser/jre-8u91-linux-x64.tar.gz /opt/mesosphere/active/dcos-ui/usr/apps/
 </pre>
 <pre>
 # mkdir /opt/mesosphere/active/dcos-ui/usr/data
-# cp /home/azure/airports1000FS.json /opt/mesosphere/active/dcos-ui/usr/data/
+# cp /home/azureuser/airports1000FS.json /opt/mesosphere/active/dcos-ui/usr/data/
 </pre>
 
 <h1> Deploy Kafka From Universe </h1>
